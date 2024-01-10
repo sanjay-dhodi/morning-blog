@@ -1,0 +1,28 @@
+<%- include("includes/header") -%>
+<!--  -->
+<% if(postData){ %>
+
+<div class="container singlePostBox">
+  <h1 class="title"><%= postData.title %></h1>
+  <img
+    src=" postimages/<%= postData.image%>"
+    alt="Morning blog post image"
+    class="post-image postPage-img"
+  />
+
+  <p class="desc postPage-desc">
+    <%= postData.desc %> Lorem ipsum dolor sit amet consectetur adipisicing
+    elit. Quod quidem reiciendis iste odio aut. Distinctio possimus tempore quia
+    libero dolorum. Tempora libero soluta, adipisci rerum neque est aliquid cum
+    dignissimos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugit
+    fugiat iste sunt earum enim ratione cumque accusamus adipisci. Maiores
+    facilis doloribus quas quo eligendi necessitatibus assumenda, asperiores
+    itaque aperiam tempore?Lorem ipsum, dolor sit amet consectetur adipisicing
+    elit. Officiis incidunt distinctio, veniam quos animi perferendis minima
+    aperiam exercitationem nisi sunt laborum vitae velit architecto at
+    cupiditate illo sit! Delectus, excepturi!Lorem
+  </p>
+</div>
+<% } %>
+<!--  -->
+<%- include("includes/footer") -%>

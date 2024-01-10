@@ -1,0 +1,55 @@
+<%- include("../includes/header") -%>
+
+<h2>Create a Post</h2>
+
+<div class="admin-form-box">
+  <form
+    class="admin"
+    action="/api/post"
+    method="post"
+    enctype="multipart/form-data"
+  >
+    <label for="postTitle">Post Title:</label>
+    <input type="text" id="postTitle" name="title" required />
+
+    <label for="postImage">Upload Image:</label>
+    <input type="file" id="postImage" name="image" accept="image/*" required />
+
+    <label for="postDescription">Post Description:</label>
+    <textarea id="postDescription" name="desc" rows="4" required></textarea>
+
+    <input type="submit" value="Create" />
+  </form>
+</div>
+
+<!-- post data  -->
+<div class="admin-form-box">
+  <h2>Post Table</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Sr no</th>
+        <th>Post Image</th>
+        <th>Post Title</th>
+
+        <th class="actions">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td><img width="50px" height="20px" src="img/ff.jpg" alt="" /></td>
+        <td>Sample Post Lorem ipsum, dolor sit amet consect</td>
+
+        <td class="actions">
+          <button onclick="">Edit</button>
+          <button onclick="">Delete</button>
+        </td>
+      </tr>
+      <!-- Add more rows as needed -->
+    </tbody>
+  </table>
+</div>
+
+<%- include("../includes/footer") -%>
