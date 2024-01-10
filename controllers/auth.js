@@ -21,19 +21,24 @@ const postLogin = (req, resp) => {
           bcrypt.compare(password, user.password).then((result) => {
             if (!result) {
               console.log("wrong password");
+              resp.redirect("/admin/login");
+            } else {
+              const { password, ...userWithoutPassword } = user._doc;
+              const token = jwt.sign(
+                userWithoutPassword,
+                process.env.JWT_TOKEN,
+                {
+                  expiresIn: "1h",
+                }
+              );
+
+              resp.cookie("access_token", token, {
+                httpOnly: true,
+                secure: true,
+              });
+
+              resp.redirect("/admin");
             }
-
-            const { password, ...userWithoutPassword } = user._doc;
-            const token = jwt.sign(userWithoutPassword, process.env.JWT_TOKEN, {
-              expiresIn: "1h",
-            });
-
-            resp.cookie("access_token", token, {
-              httpOnly: true,
-              secure: true,
-            });
-
-            resp.redirect("/admin");
           });
         }
       })

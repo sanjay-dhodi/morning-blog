@@ -24,7 +24,9 @@
 
 <!-- post data  -->
 <div class="admin-form-box">
-  <h2>Post Table</h2>
+  <h2>Post Data</h2>
+
+  <% if (postData){ let index = 1; %>
 
   <table>
     <thead>
@@ -37,19 +39,54 @@
       </tr>
     </thead>
     <tbody>
+      <%postData.forEach(post=>{ %>
+
       <tr>
-        <td>1</td>
-        <td><img width="50px" height="20px" src="img/ff.jpg" alt="" /></td>
-        <td>Sample Post Lorem ipsum, dolor sit amet consect</td>
+        <td><%= index %></td>
+        <td>
+          <img
+            width="50px"
+            height="20px"
+            src="postimages/<%= post.image %>"
+            alt=""
+          />
+        </td>
+        <td><%= post.title %></td>
 
         <td class="actions">
           <button onclick="">Edit</button>
-          <button onclick="">Delete</button>
+          <button onclick="deletePost('<%= post._id%>')">Delete</button>
         </td>
       </tr>
+
+      <% index++ })%>
       <!-- Add more rows as needed -->
     </tbody>
   </table>
+
+  <%}else{%>
+
+  <h3 style="text-align: center; margin: 1rem; color: red">
+    no post available please create
+  </h3>
+
+  <%}%>
 </div>
+
+<script>
+  function deletePost(value) {
+    fetch("/api/post/delete/" + value, { method: "DELETE" })
+      .then((response) => {
+        if (!response.ok) {
+          console.log("delete fail");
+        }
+        if (response.ok) {
+          // location.reload();
+          window.location.href = "/admin";
+        }
+      })
+      .catch((err) => console.log("error in deleing post api" + err));
+  }
+</script>
 
 <%- include("../includes/footer") -%>

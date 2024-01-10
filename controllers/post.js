@@ -98,18 +98,19 @@ const deletePost = async (req, resp) => {
   const id = req.params.id;
 
   try {
-    await postModel
+    postModel
       .findByIdAndDelete(id)
       .then((result) => {
         if (!result) {
-          resp.json("no data found for delete");
         } else {
-          resp.json({ "deleted data ": result });
+          resp.json("successfully delete");
         }
       })
-      .catch((err) => resp.json({ "failed to delet": err.toString() }));
+      .catch((err) => {
+        console.log(err.toString());
+      });
   } catch (error) {
-    resp.json(error.toString());
+    console.log(error.toString());
   }
 };
 

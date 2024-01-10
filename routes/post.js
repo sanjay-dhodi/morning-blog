@@ -8,8 +8,13 @@ router.get("/api/post/:id", postController.readMore);
 
 //
 router.get("/api/post", postController.getPost);
-router.post("/api/post", uploads.single("image"), verifyUser,postController.createPost);
-router.put("/api/post/update/:id", verifyUser,postController.editPost);
-router.delete("/api/post/delete/:id", verifyUser,postController.deletePost);
+router.post(
+  "/api/post",
+  uploads.single("image"),
+  verifyUser,
+  postController.createPost
+);
+router.put("/api/post/update/:id", verifyUser, postController.editPost);
+router.delete("/api/post/delete/:id", postController.deletePost);
 
 module.exports = router;
