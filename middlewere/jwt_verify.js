@@ -6,8 +6,7 @@ const verifyUser = (req, resp, next) => {
   // const token = "ssssssssssssss";
 
   if (!token) {
-    next(new Error("no token found"));
-    resp.redirect("/admin/login");
+    next(new Error("no token found | need login to access this page"));
   }
 
   if (token) {
