@@ -1,25 +1,24 @@
 const mongoose = require("mongoose");
 require("../utility/mongoconnection");
 
-const PostSchema = new mongoose.Schema({
-  title: {
-    require: true,
-    type: String,
+const PostSchema = new mongoose.Schema(
+  {
+    title: {
+      require: true,
+      type: String,
+    },
+    desc: {
+      require: true,
+      type: String,
+    },
+    image: {
+      require: true,
+      type: String,
+    },
   },
-  desc: {
-    require: true,
-    type: String,
-  },
-  image: {
-    require: true,
-    type: String,
-  },
-  filetype: {
-    require: true,
-    type: String,
-  },
-},{
-  timestamps:true
-});
+  {
+    timestamps: true,
+  }
+);
 
 module.exports = mongoose.model("post", PostSchema);

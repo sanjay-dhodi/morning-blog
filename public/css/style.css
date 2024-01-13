@@ -15,8 +15,7 @@ body {
   max-width: 900px;
   height: fit-content;
   margin-inline: auto;
-  padding: 1rem 0; 
-  
+  padding: 1rem 0;
 }
 
 header {
@@ -236,4 +235,11 @@ tr:hover {
 
 td.actions {
   white-space: nowrap;
+}
+
+/* edit post */
+
+.btn {
+  background-color: #4caf50;
+  color: white;
 }

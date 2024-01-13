@@ -8,13 +8,24 @@ router.get("/api/post/:id", postController.readMore);
 router.get("/api/post", postController.getPost);
 router.post(
   "/api/post",
-  uploads.single("image"),
   verifyUser,
+  uploads.single("image"),
+
   postController.createPost
 );
 
 // todoo: require edit post to connect with fron end
-router.put("/api/post/update/:id", verifyUser, postController.editPost);
+router.get(
+  "/api/post/update/:id",
+  verifyUser,
+  postController.renderEditPostPage
+);
+router.put(
+  "/api/post/update/:id",
+  verifyUser,
+  uploads.single("image"),
+  postController.editPost
+);
 router.delete("/api/post/delete/:id", verifyUser, postController.deletePost);
 
 module.exports = router;

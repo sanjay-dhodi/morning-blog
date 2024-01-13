@@ -54,7 +54,7 @@
         <td><%= post.title %></td>
 
         <td class="actions">
-          <button onclick="">Edit</button>
+          <a href="/api/post/update/<%= post._id%>"> <button>Edit</button></a>
           <button onclick="deletePost('<%= post._id%>')">Delete</button>
         </td>
       </tr>

@@ -47,7 +47,6 @@ const createPost = async (req, resp) => {
     title: req.body.title,
     desc: req.body.desc,
     image: req.file.filename,
-    filetype: fileType,
   };
 
   try {
@@ -71,13 +70,30 @@ const createPost = async (req, resp) => {
   }
 };
 
+const renderEditPostPage = async (req, resp) => {
+  const postId = req.params.id;
+
+  try {
+    const editPost = await postModel.findById(postId);
+    resp.render("admin/editpost", { err: "", postData: editPost });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 // edit post
 const editPost = async (req, resp) => {
   const id = req.params.id;
 
+  const data = {
+    title: req.body.title,
+    desc: req.body.desc,
+    image: req.file.filename,
+  };
+
   try {
     await postModel
-      .findByIdAndUpdate(id, { $set: { title: "sam altman" } }, { new: true })
+      .findByIdAndUpdate(id, { $set: data }, { new: true })
       .then((result) => {
         if (!result) {
           resp.json({ "no found updated data": result });
@@ -114,4 +130,11 @@ const deletePost = async (req, resp) => {
   }
 };
 
-module.exports = { getPost, readMore, createPost, editPost, deletePost };
+module.exports = {
+  getPost,
+  readMore,
+  createPost,
+  editPost,
+  deletePost,
+  renderEditPostPage,
+};
