@@ -7,72 +7,74 @@ const getLoginPage = (req, resp) => {
   resp.render("admin/login", { err: "" });
 };
 
-const postLogin = (req, resp) => {
+const postLogin = async (req, resp) => {
   const username = req.body.username;
   const password = req.body.password;
 
-  if (username && password != undefined) {
-    userModel
-      .findOne({ username: username })
-      .then((user) => {
-        if (user == null || undefined) {
-          console.log("user not found with this username");
+  try {
+    if (username && password !== undefined) {
+      const user = await userModel.findOne({ username: username });
+
+      if (user === null || user === undefined) {
+        console.log("User not found with this username");
+      } else {
+        const result = await bcrypt.compare(password, user.password);
+
+        if (!result) {
+          console.log("Wrong password");
+          resp.redirect("/admin/login");
         } else {
-          bcrypt.compare(password, user.password).then((result) => {
-            if (!result) {
-              console.log("wrong password");
-              resp.redirect("/admin/login");
-            } else {
-              const { password, ...userWithoutPassword } = user._doc;
-              const token = jwt.sign(
-                userWithoutPassword,
-                process.env.JWT_TOKEN,
-                {
-                  expiresIn: "1h",
-                }
-              );
-
-              resp.cookie("access_token", token, {
-                httpOnly: true,
-                secure: true,
-              });
-
-              resp.redirect("/admin");
-            }
+          const { password, ...userWithoutPassword } = user._doc;
+          const token = jwt.sign(userWithoutPassword, process.env.JWT_TOKEN, {
+            expiresIn: "1h",
           });
+
+          resp.cookie("access_token", token, {
+            httpOnly: true,
+            secure: true,
+          });
+
+          resp.redirect("/admin");
         }
-      })
-      .catch((err) => {
-        console.log(err.toString());
-      });
+      }
+    } else {
+      console.log("Invalid username or password");
+    }
+  } catch (error) {
+    console.error("Error during login:", error.toString());
   }
 };
 
-// register
+// render register page
 const getRegisterPage = (req, resp) => {
   resp.render("admin/register", { err: "" });
 };
-const postRegister = (req, resp) => {
+
+// register page post request handler
+
+const postRegister = async (req, resp) => {
   const username = req.body.username;
   const password = req.body.password;
 
-  bcrypt.hash(password, 12, function (err, hash) {
-    if (err) {
-      console.log(err + "password hash problem");
+  try {
+    const existingUser = await userModel.findOne({ username: username });
+
+    if (existingUser) {
+      console.log("User with this username already exists");
     } else {
+      const hash = await bcrypt.hash(password, 12);
+
       const user = new userModel({
         username: username,
         password: hash,
       });
 
-      user
-        .save()
-        .then(console.log("user successfully created"))
-        .catch((err) => {
-          console.log(err.toString());
-        });
+      await user.save();
+      console.log("User successfully created");
     }
-  });
+  } catch (error) {
+    console.error("Error creating user:", error.toString());
+  }
 
   resp.redirect("admin/login");
 };

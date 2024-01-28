@@ -1,4 +1,6 @@
 const postModel = require("../models/post_model");
+const fs = require("fs");
+const path = require("path");
 
 // get post
 const getPost = async (req, resp) => {
@@ -17,22 +19,16 @@ const getPost = async (req, resp) => {
 
 // get single post with read more
 
-const readMore = (req, resp) => {
+const readMore = async (req, resp) => {
   const postId = req.params.id;
 
   try {
-    postModel
-      .findOne({ _id: postId })
-      .then((result) => {
-        if (!result) {
-          resp.json({ "no found post data": result });
-        } else {
-          resp.render("post", { postData: result, err: "" });
-        }
-      })
-      .catch((err) => {
-        resp.json({ "failed to retrive": err.toString() });
-      });
+    const result = await postModel.findOne({ _id: postId });
+    if (!result) {
+      resp.json({ "no found post data": result });
+    } else {
+      resp.render("post", { postData: result, err: "" });
+    }
   } catch (error) {
     resp.json(error.toString());
   }
@@ -49,22 +45,18 @@ const createPost = async (req, resp) => {
     image: req.file.filename,
   };
 
+  const postData = new postModel(data);
   try {
-    const postData = new postModel(data);
+    const result = await postData.save();
 
-    await postData
-      .save()
-      .then((result) => {
-        if (result) {
-          resp.redirect("/admin");
-        }
-      })
-      .catch((err) =>
-        resp.json({
-          "err msg": "data stored failed",
-          "err type": err.toString(),
-        })
-      );
+    if (result) {
+      resp.redirect("/admin");
+    } else {
+      resp.json({
+        errMsg: "data stored failed",
+        errType: err.toString(),
+      });
+    }
   } catch (error) {
     resp.json("somthing wrong with create post " + error.toString());
   }
@@ -92,20 +84,19 @@ const editPost = async (req, resp) => {
   };
 
   try {
-    await postModel
-      .findByIdAndUpdate(id, { $set: data }, { new: true })
-      .then((result) => {
-        if (!result) {
-          resp.json({ "no found updated data": result });
-        } else {
-          resp.json({ "updated data": result });
-        }
-      })
-      .catch((err) => {
-        resp.json({ "failed to update": err.toString() });
-      });
+    const result = await postModel.findByIdAndUpdate(
+      id,
+      { $set: data },
+      { new: true }
+    );
+
+    if (!result) {
+      resp.json({ "no found updated data": result });
+    } else {
+      resp.json({ "updated data": result });
+    }
   } catch (error) {
-    resp.json(error.toString());
+    resp.json({ error: error.toString() });
   }
 };
 
@@ -114,19 +105,24 @@ const deletePost = async (req, resp) => {
   const id = req.params.id;
 
   try {
-    postModel
-      .findByIdAndDelete(id)
-      .then((result) => {
-        if (!result) {
-        } else {
-          resp.json("successfully delete");
-        }
-      })
-      .catch((err) => {
-        console.log(err.toString());
-      });
+    const result = await postModel.findByIdAndDelete(id);
+
+    if (!result) {
+      resp.status(404).json({ error: "Post not found" });
+      return;
+    }
+
+    const imagePath = path.join("public", "postimages", result.image);
+
+    if (fs.existsSync(imagePath)) {
+      await fs.promises.unlink(imagePath);
+      resp.json("Successfully deleted");
+    } else {
+      resp.status(404).json({ error: "Image file not found" });
+    }
   } catch (error) {
-    console.log(error.toString());
+    console.error(error.toString());
+    resp.status(500).json({ error: "Internal Server Error" });
   }
 };
 

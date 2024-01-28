@@ -13,7 +13,6 @@ router.post(
   postController.createPost
 );
 
-// todoo: require edit post to connect with fron end
 router.get(
   "/api/post/update/:id",
   verifyUser,
