@@ -10,7 +10,6 @@ router.post(
   "/api/post",
   verifyUser,
   uploads.single("image"),
-
   postController.createPost
 );
 
