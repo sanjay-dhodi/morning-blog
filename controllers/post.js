@@ -41,6 +41,20 @@ const createPost = async (req, resp) => {
 
   if (!result.isEmpty()) {
     console.log(result);
+
+    // this code is for delete unneccessoy .jfif image file created by multer
+    // when other input field occur error but if file input field have files then it created .jfif file by multer
+    if (req.file) {
+      const imagePath = path.join("public", "postimages", req.file.filename);
+
+      if (fs.existsSync(imagePath)) {
+        await fs.promises.unlink(imagePath);
+        console.log("Successfully deleted");
+      } else {
+        console.log({ error: "Image file not found" });
+      }
+    }
+
     resp.redirect("/admin");
   } else {
     const data = {
@@ -122,6 +136,7 @@ const deletePost = async (req, resp) => {
       return;
     }
 
+    // also delete  image file from destination folder
     const imagePath = path.join("public", "postimages", result.image);
 
     if (fs.existsSync(imagePath)) {

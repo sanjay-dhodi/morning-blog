@@ -22,8 +22,8 @@
       />
 
       <div class="post-text-data">
-        <h4 class="post-title"><%= post.title %></h4>
-        <p class="post-description"><%= post.desc %></p>
+        <h4 class="post-title"><%= post.title.substr(0,50) %></h4>
+        <p class="post-description"><%= post.desc.substr(0.150) %></p>
         <a href="http://localhost:8080/api/post/<%= post._id %>"
           ><button class="read-btn">Read more....</button></a
         >
