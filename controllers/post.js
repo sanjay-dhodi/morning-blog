@@ -1,6 +1,7 @@
 const postModel = require("../models/post_model");
 const fs = require("fs");
 const path = require("path");
+const { validationResult } = require("express-validator");
 
 // get post
 const getPost = async (req, resp) => {
@@ -36,29 +37,33 @@ const readMore = async (req, resp) => {
 
 // create post
 const createPost = async (req, resp) => {
-  const mimetype = req.file.mimetype.split("/");
-  const fileType = mimetype[1];
+  const result = validationResult(req);
 
-  const data = {
-    title: req.body.title,
-    desc: req.body.desc,
-    image: req.file.filename,
-  };
+  if (!result.isEmpty()) {
+    console.log(result);
+    resp.redirect("/admin");
+  } else {
+    const data = {
+      title: req.body.title,
+      desc: req.body.desc,
+      image: req.file.filename,
+    };
 
-  const postData = new postModel(data);
-  try {
-    const result = await postData.save();
+    const postData = new postModel(data);
+    try {
+      const result = await postData.save();
 
-    if (result) {
-      resp.redirect("/admin");
-    } else {
-      resp.json({
-        errMsg: "data stored failed",
-        errType: err.toString(),
-      });
+      if (result) {
+        resp.redirect("/admin");
+      } else {
+        resp.json({
+          errMsg: "data stored failed",
+          errType: err.toString(),
+        });
+      }
+    } catch (error) {
+      resp.json("somthing wrong with create post " + error.toString());
     }
-  } catch (error) {
-    resp.json("somthing wrong with create post " + error.toString());
   }
 };
 
@@ -75,28 +80,33 @@ const renderEditPostPage = async (req, resp) => {
 
 // edit post
 const editPost = async (req, resp) => {
-  const id = req.params.id;
+  const result = validationResult(req);
+  if (!result.isEmpty()) {
+    console.log(result);
+  } else {
+    const id = req.params.id;
 
-  const data = {
-    title: req.body.title,
-    desc: req.body.desc,
-    image: req.file.filename,
-  };
+    const data = {
+      title: req.body.title,
+      desc: req.body.desc,
+      image: req.file.filename,
+    };
 
-  try {
-    const result = await postModel.findByIdAndUpdate(
-      id,
-      { $set: data },
-      { new: true }
-    );
+    try {
+      const result = await postModel.findByIdAndUpdate(
+        id,
+        { $set: data },
+        { new: true }
+      );
 
-    if (!result) {
-      resp.json({ "no found updated data": result });
-    } else {
-      resp.json({ "updated data": result });
+      if (!result) {
+        resp.json({ "no found updated data": result });
+      } else {
+        resp.json({ "updated data": result });
+      }
+    } catch (error) {
+      resp.json({ error: error.toString() });
     }
-  } catch (error) {
-    resp.json({ error: error.toString() });
   }
 };
 

@@ -38,7 +38,7 @@ const postLogin = async (req, resp) => {
         }
       }
     } else {
-      console.log("Invalid username or password");
+      console.log("please enter email or password");
     }
   } catch (error) {
     console.error("Error during login:", error.toString());
