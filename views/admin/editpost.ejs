@@ -47,9 +47,9 @@
     const editForm = document.getElementById("update_form");
     const formData = new FormData(editForm);
 
-    formData.forEach((value) => {
-      console.log(value);
-    });
+    // formData.forEach((value) => {
+    //   console.log(value);
+    // });
 
     try {
       const response = await fetch("/api/post/update/" + id, {
